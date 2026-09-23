@@ -1,8 +1,58 @@
-# Omakase Ruby styling for Rails
-inherit_gem: { rubocop-rails-omakase: rubocop.yml }
+plugins:
+  - rubocop-rails
+  - rubocop-performance
+  - rubocop-rake
+  - rubocop-thread_safety
+  - rubocop-capybara
+  - rubocop-i18n
+  - rubocop-minitest
 
-# Overwrite or add rules to create your own house style
-#
-# # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
-# Layout/SpaceInsideArrayLiteralBrackets:
-#   Enabled: false
+require:
+  - rubocop-ast
+
+AllCops:
+  NewCops: enable
+  Exclude:
+    - bin/**/*
+    - db/*_schema.rb
+    - db/schema.rb
+    - db/migrate/*
+    - log/**/*
+    - public/**/*
+    - storage/**/*
+    - tmp/**/*
+    - vendor/**/*
+
+# Disable the frozen string literal comment for all files, will be enabled by default in Ruby 3.4 using latest rubocop
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+# Disable block length metric for environment files and routes file
+Metrics/BlockLength:
+  Exclude:
+    - config/environments/**/*
+    - config/routes.rb
+
+# Allow to use join table only without other attributes
+Rails/HasAndBelongsToMany:
+  Enabled: false
+
+# These classes are self explanatory, so disable the top level documentation for them
+Style/Documentation:
+  Exclude:
+    - app/**/application_*.rb
+    - app/**/base_*.rb
+    - app/helpers/**/*.rb
+    - config/application.rb
+    - db/**/*.rb
+    - test/**/*.rb
+
+# All the services may override the constructor, we don't want to specify super everytime there
+# because there is no super implementation
+Lint/MissingSuper:
+  Exclude:
+    - app/services/**/*
+
+# Later need to be removed, this is a temporary solution to avoid false negative
+Rails/UniqueValidationWithoutIndex:
+  Enabled: false
