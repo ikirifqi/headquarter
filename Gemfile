@@ -73,6 +73,9 @@ group :development, :test do
 
   # Lint your ERB or HTML files
   gem 'erb_lint', '0.9.0', require: false
+
+  # Load environment variables from .env into ENV in development and test
+  gem 'dotenv-rails'
 end
 
 group :development do
