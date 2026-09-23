@@ -1,7 +1,7 @@
 import { createInertiaApp } from '@inertiajs/svelte'
 
 createInertiaApp({
-  pages: "../pages",
+  pages: '../pages',
 
   defaults: {
     form: {
@@ -9,7 +9,7 @@ createInertiaApp({
       withAllErrors: true,
     },
     visitOptions: () => {
-      return { queryStringArrayFormat: "brackets" }
+      return { queryStringArrayFormat: 'brackets' }
     },
   },
 })
