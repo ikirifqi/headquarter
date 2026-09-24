@@ -140,6 +140,10 @@ constructor without calling `super` (`Lint/MissingSuper` is excluded for `app/se
   and `@plugin`), not a `tailwind.config.js`.
 - Props shared from `InertiaController` must be reflected in `app/frontend/types/index.ts`
   (`SharedProps`) so pages stay typed.
+- `check:types` passes `--config ./svelte.config.js` to `svelte-check` on purpose. Without it
+  `svelte-check` crawls the whole workspace for `svelte.config.*` / `vite.config.*`, ignoring only
+  `node_modules`, and picks up the template configs shipped inside gems under `vendor/bundle`
+  (where CI installs gems). Keep the flag or CI breaks even though local runs look fine.
 
 ## Testing
 
