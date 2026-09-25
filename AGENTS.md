@@ -173,9 +173,22 @@ A change is complete only when all of the following pass, since GitHub Actions e
   tags on `main` mark production deploys.
 - Commits follow Conventional Commits with a lowercase, imperative subject:
   `feat:`, `fix:`, `chore:`, `docs:`, `ci:`, `test:`, `refactor:`.
-- Keep commits semantic and atomic — one logical change per commit, split by context instead of
-  bundling unrelated edits together.
 - Never commit `config/master.key`, `.env`, or anything under `storage/`.
+
+### Atomic commits
+
+Always commit atomically. A commit is one logical change that stands on its own, and the subject
+line describes it without needing an "and".
+
+- Never dump a large change into one or two giant commits. Break the work down and group the pieces
+  by context, then commit each group separately.
+- A single feature usually spans several commits — for example the migration and model, the
+  controller and route, the Svelte page, and the tests each land on their own.
+- Keep unrelated edits apart. Drive-by renames, formatting fixes, and dependency bumps get their own
+  commits instead of riding along with feature work.
+- Stage selectively (`git add -p`) when a working tree holds more than one logical change.
+- Every commit should leave the repository in a working state, so the history stays reviewable and
+  individual commits can be reverted in isolation.
 
 ## Things to avoid
 
