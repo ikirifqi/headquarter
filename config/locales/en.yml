@@ -28,4 +28,6 @@
 #       enabled: "ON"
 
 en:
-  hello: "Hello world"
+  sessions:
+    create:
+      invalid_email: Enter a valid email to continue.
