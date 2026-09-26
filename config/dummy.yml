@@ -1,0 +1,664 @@
+# Mocked workspace data rendered by every Headquarter page.
+#
+# Nothing here is persisted: the Dummy::* classes in app/models/dummy read this file on each
+# request and shape it into Inertia props. Replace a section with a real source (Linear, Stripe,
+# GitHub, ...) by swapping the matching Dummy class, not by editing the Svelte pages.
+#
+# Dates are ISO 8601 so the server can sort, group and position them. `today` pins the clock the
+# mock data was written against, so relative values (due soon, roadmap marker) stay consistent.
+
+organization:
+  name: Halden AI
+  today: 2026-09-15
+
+# Anyone can read every page. Editors can add ideas and comments. Admins reach Admin.
+# `pages` mirrors the per-page toggles on Admin > Team & access.
+members:
+  - name: Ana Lindqvist
+    email: ana@halden.ai
+    role: admin
+    pages: [health, billing, roadmap, progress, releases, discussions, ideas]
+  - name: Board — R. Okafor
+    email: r.okafor@board.halden.ai
+    role: viewer
+    demo: true
+    pages: [health, billing, roadmap, progress, releases, discussions]
+  - name: Commissioner — H. Tan
+    email: h.tan@ext.halden.ai
+    role: viewer
+    pages: [health, billing, roadmap, releases, discussions]
+  - name: Mira Sato
+    email: mira@halden.ai
+    role: editor
+    demo: true
+    pages: [health, roadmap, progress, releases, discussions, ideas]
+  - name: Dev Raman
+    email: dev@halden.ai
+    role: admin
+    demo: true
+    pages: [health, billing, roadmap, progress, releases, discussions, ideas]
+
+# status: operational | degraded | outage. `history` is the last 7 days, oldest first.
+services:
+  - name: Web app
+    description: app.halden.ai
+    status: operational
+    uptime: 99.98%
+    history: [operational, operational, operational, operational, operational, operational, operational]
+  - name: Public API
+    description: api.halden.ai · v2
+    status: operational
+    uptime: 99.95%
+    history: [operational, operational, outage, operational, operational, operational, operational]
+  - name: Model gateway
+    description: Routes requests to OpenAI / Anthropic
+    status: degraded
+    uptime: 99.71%
+    history: [operational, operational, operational, operational, operational, operational, degraded]
+  - name: Authentication
+    description: Sign-in, SSO, sessions
+    status: operational
+    uptime: 100%
+    history: [operational, operational, operational, operational, operational, operational, operational]
+  - name: Webhooks
+    description: Outbound events to customers
+    status: operational
+    uptime: 99.90%
+    history: [degraded, operational, operational, operational, operational, operational, operational]
+
+# status: responding | backlogged | idle
+queues:
+  - name: Default worker
+    status: responding
+    depth: 12
+    latency: 0.8s
+    last_beat: 14s
+  - name: Email & notifications
+    status: responding
+    depth: 3
+    latency: 0.2s
+    last_beat: 22s
+  - name: Model inference
+    status: backlogged
+    depth: 418
+    latency: 46s
+    last_beat: 9s
+  - name: Nightly reports
+    status: idle
+    depth: 0
+    latency: —
+    last_beat: '03:10'
+
+# state: investigating | identified | monitoring | resolved. Updates are newest first.
+incidents:
+  - date: 2026-09-15
+    duration: Ongoing · 1h 12m
+    title: Slow responses from model gateway
+    state: monitoring
+    affected: Model gateway, Model inference queue
+    updates:
+      - time: '09:48'
+        label: Monitoring
+        text: Traffic shifted to the secondary provider. Queue draining; wait times back under a minute within the hour.
+      - time: '09:02'
+        label: Identified
+        text: Upstream provider rate-limiting our primary region. Inference jobs piling up.
+      - time: '08:36'
+        label: Investigating
+        text: Elevated latency on assistant replies reported by two customers.
+  - date: 2026-09-11
+    duration: 38 min
+    title: Public API returned errors for a subset of requests
+    state: resolved
+    affected: Public API
+    updates:
+      - time: '15:14'
+        label: Resolved
+        text: Faulty deploy rolled back. Error rate at zero for 20 minutes.
+      - time: '14:41'
+        label: Identified
+        text: Release 2.14.0 introduced a validation bug on bulk endpoints.
+      - time: '14:36'
+        label: Investigating
+        text: Spike in 5xx responses detected by Sentry.
+  - date: 2026-09-09
+    duration: 2h 05m
+    title: Webhook deliveries delayed
+    state: resolved
+    affected: Webhooks
+    updates:
+      - time: '11:20'
+        label: Resolved
+        text: Backlog fully delivered. No events lost.
+      - time: '09:15'
+        label: Identified
+        text: Database connection pool exhausted by a long-running migration.
+
+# Upcoming payments. kind: subscription | usage | one_time. Amounts are whole USD.
+# `source` is where the entry came from; "Manual" entries are editable under Admin > Manual entry.
+bills:
+  - date: 2026-09-18
+    platform: OpenAI
+    description: API usage · August
+    kind: usage
+    amount: 2840
+    invoice_no: OAI-2026-08-4471
+    account: billing@halden.ai
+    method: Card •• 4021
+    source: Stripe sync
+    file: { name: openai-aug-2026.pdf, meta: PDF · 84 KB }
+  - date: 2026-09-20
+    platform: Vercel
+    description: Pro team · monthly
+    kind: subscription
+    amount: 150
+    invoice_no: VRC-77012
+    account: dev@halden.ai
+    method: Card •• 4021
+    source: Stripe sync
+    file: { name: vercel-sep-2026.pdf, meta: PDF · 41 KB }
+  - date: 2026-09-22
+    platform: Anthropic
+    description: API usage · August
+    kind: usage
+    amount: 1965
+    invoice_no: ANT-118203
+    account: billing@halden.ai
+    method: Card •• 4021
+    source: Stripe sync
+    file: { name: anthropic-aug-2026.pdf, meta: PDF · 79 KB }
+  - date: 2026-09-28
+    platform: AWS
+    description: Compute, RDS, S3 · monthly
+    kind: subscription
+    amount: 4120
+    invoice_no: AWS-2026-09
+    account: ops@halden.ai · acct 5521
+    method: Invoice · net 30
+    source: AWS Cost Explorer
+    file: { name: aws-sep-2026.pdf, meta: PDF · 212 KB }
+  - date: 2026-10-01
+    platform: GitHub
+    description: Team seats × 12 · monthly
+    kind: subscription
+    amount: 48
+    account: org halden
+    method: Card •• 4021
+    source: Stripe sync
+  - date: 2026-10-01
+    platform: Linear
+    description: Standard × 12 · monthly
+    kind: subscription
+    amount: 96
+    account: ana@halden.ai
+    method: Card •• 4021
+    source: Stripe sync
+  - date: 2026-10-04
+    platform: Postmark
+    description: Transactional email · monthly
+    kind: subscription
+    amount: 65
+    account: ops@halden.ai
+    method: Card •• 4021
+    source: Stripe sync
+  - date: 2026-10-12
+    platform: Apple Developer
+    description: Program membership · annual
+    kind: subscription
+    amount: 99
+    account: apps@halden.ai
+    method: Card •• 4021
+    source: Manual
+  - date: 2026-10-15
+    platform: Sentry
+    description: Team plan · annual renewal
+    kind: subscription
+    amount: 1044
+    invoice_no: SEN-Q-3391
+    account: ops@halden.ai
+    method: Card •• 4021
+    source: Manual
+    file: { name: sentry-quote-2026.pdf, meta: PDF · 58 KB }
+  - date: 2026-10-20
+    platform: Vercel
+    description: Pro team · monthly
+    kind: subscription
+    amount: 150
+    account: dev@halden.ai
+    method: Card •• 4021
+    source: Stripe sync
+  - date: 2026-10-24
+    platform: Design contractor
+    description: Scout onboarding illustrations
+    kind: one_time
+    amount: 3200
+    invoice_no: LK-0042
+    account: Lena Kovač Studio
+    method: Bank transfer
+    source: Manual
+    file: { name: kovac-invoice-0042.pdf, meta: PDF · 133 KB }
+  - date: 2026-10-28
+    platform: AWS
+    description: Compute, RDS, S3 · monthly
+    kind: subscription
+    amount: 4120
+    account: ops@halden.ai · acct 5521
+    method: Invoice · net 30
+    source: AWS Cost Explorer
+  - date: 2026-11-03
+    platform: Notion
+    description: Business × 12 · annual renewal
+    kind: subscription
+    amount: 2160
+    account: ana@halden.ai
+    method: Card •• 4021
+    source: Stripe sync
+  - date: 2026-11-08
+    platform: SOC 2 audit
+    description: Type I engagement · deposit
+    kind: one_time
+    amount: 7500
+    invoice_no: PRE-2026-118
+    account: Prescient Assurance
+    method: Bank transfer
+    source: Manual
+    file: { name: soc2-engagement-letter.pdf, meta: PDF · 1.2 MB }
+  - date: 2026-11-20
+    platform: Vercel
+    description: Pro team · monthly
+    kind: subscription
+    amount: 150
+    account: dev@halden.ai
+    method: Card •• 4021
+    source: Stripe sync
+  - date: 2026-11-28
+    platform: AWS
+    description: Compute, RDS, S3 · monthly
+    kind: subscription
+    amount: 4120
+    account: ops@halden.ai · acct 5521
+    method: Invoice · net 30
+    source: AWS Cost Explorer
+  - date: 2026-12-01
+    platform: Figma
+    description: Professional × 4 · annual renewal
+    kind: subscription
+    amount: 720
+    account: mira@halden.ai
+    method: Card •• 4021
+    source: Stripe sync
+  - date: 2026-12-09
+    platform: Halden domain portfolio
+    description: Renewals · 6 domains
+    kind: one_time
+    amount: 210
+    account: ops@halden.ai
+    method: Card •• 4021
+    source: Manual
+
+# The roadmap timeline starts here and spans `months` months.
+roadmap:
+  starts_on: 2026-09-01
+  months: 6
+
+# Ticket ids are assigned from `prefix` in epic/task order, starting at 101 (ATL-101, ATL-102, ...).
+# milestone status: done | progress | planned | risk. task status: done | progress | todo | blocked.
+# release channel: stable | beta | hotfix.
+projects:
+  - id: atlas
+    prefix: ATL
+    name: Atlas
+    description: 'The customer-facing platform: workspaces, documents, and the assistant surface.'
+    current_epic: Shared workspaces
+    next_deliverable: Workspaces beta to 10 design partners
+    next_date: 2026-10-02
+    milestones:
+      - { name: Document editor v2, starts_on: 2026-09-01, ends_on: 2026-09-28, status: done, progress: 100 }
+      - { name: Shared workspaces, starts_on: 2026-09-16, ends_on: 2026-10-28, status: progress, progress: 62 }
+      - { name: Permissions & audit log, starts_on: 2026-10-19, ends_on: 2026-11-25, status: planned, progress: 0 }
+      - { name: Mobile companion, starts_on: 2026-11-16, ends_on: 2027-01-19, status: planned, progress: 0 }
+      - { name: Enterprise SSO, starts_on: 2026-12-07, ends_on: 2027-01-07, status: risk, progress: 0 }
+      - { name: Public launch, starts_on: 2027-01-25, ends_on: 2027-02-13, status: planned, progress: 0 }
+    epics:
+      - name: Shared workspaces
+        tasks:
+          - { title: Invite flow with email + link, owner: Mira, status: done }
+          - { title: Workspace switcher in sidebar, owner: Jonas, status: done }
+          - { title: Real-time presence indicators, owner: Mira, status: progress }
+          - { title: 'Role picker: owner / editor / viewer', owner: Dev, status: progress }
+          - { title: Activity feed per workspace, owner: Jonas, status: todo }
+          - { title: Migration for existing single-user docs, owner: Dev, status: blocked }
+      - name: Permissions & audit log
+        tasks:
+          - { title: Define audit event schema, owner: Dev, status: todo }
+          - { title: Export audit log as CSV, status: todo }
+      - name: Housekeeping
+        tasks:
+          - { title: Upgrade Postgres to 17, owner: Dev, status: done }
+          - { title: Remove legacy editor flag, owner: Jonas, status: todo }
+    releases:
+      - version: 2.14.1
+        date: 2026-09-12
+        channel: hotfix
+        title: Bulk endpoint validation fix
+        summary: Rolls back the validation regression shipped in 2.14.0 that returned errors for some bulk requests.
+        changes:
+          fixed:
+            - Bulk document import rejected payloads with optional fields missing
+            - Retry button in import dialog did nothing after a failure
+      - version: 2.14.0
+        date: 2026-09-10
+        channel: stable
+        title: Document editor v2 for everyone
+        summary: The new editor leaves beta. Faster on large documents, with inline comments and a cleaner formatting toolbar.
+        changes:
+          added:
+            - Inline comments with @mentions
+            - Slash commands for headings, tables and callouts
+            - Keyboard shortcut reference (press ?)
+          changed:
+            - Autosave interval reduced from 10s to 2s
+            - Formatting toolbar collapses on narrow screens
+          fixed:
+            - Pasting from Google Docs dropped nested lists
+      - version: 2.13.0
+        date: 2026-08-27
+        channel: stable
+        title: Workspace invitations
+        summary: 'First piece of shared workspaces: invite teammates by email or link.'
+        changes:
+          added:
+            - Invite by email or shareable link
+            - Pending invitations list under Settings
+
+  - id: relay
+    prefix: RLY
+    name: Relay
+    description: Public API, webhooks and integrations that let customers connect Halden to their own tools.
+    current_epic: Webhook reliability
+    next_deliverable: Guaranteed delivery with replay
+    next_date: 2026-09-30
+    milestones:
+      - { name: API v2 GA, starts_on: 2026-09-01, ends_on: 2026-09-19, status: done, progress: 100 }
+      - { name: Webhook reliability, starts_on: 2026-09-07, ends_on: 2026-10-10, status: progress, progress: 70 }
+      - { name: Zapier & Make connectors, starts_on: 2026-10-07, ends_on: 2026-11-19, status: planned, progress: 0 }
+      - { name: Rate-limit tiers, starts_on: 2026-11-13, ends_on: 2026-12-10, status: planned, progress: 0 }
+      - { name: Partner SDKs (JS, Python), starts_on: 2026-12-01, ends_on: 2027-02-07, status: planned, progress: 0 }
+    epics:
+      - name: Webhook reliability
+        tasks:
+          - { title: Persist events before dispatch, owner: Dev, status: done }
+          - { title: Exponential backoff with jitter, owner: Dev, status: done }
+          - { title: Replay endpoint for failed deliveries, owner: Sam, status: progress }
+          - { title: Delivery log in customer dashboard, owner: Mira, status: progress }
+          - { title: Signing key rotation, owner: Sam, status: todo }
+      - name: Connectors
+        tasks:
+          - { title: Zapier app submission, owner: Sam, status: todo }
+          - { title: Make.com module scaffolding, status: todo }
+    releases:
+      - version: 1.8.0
+        date: 2026-09-08
+        channel: stable
+        title: Webhook retries
+        summary: Failed deliveries now retry up to 8 times over 24 hours.
+        changes:
+          added:
+            - Automatic retries with backoff
+            - X-Halden-Attempt header on each delivery
+          changed:
+            - Webhook timeout raised from 5s to 10s
+      - version: 1.7.2
+        date: 2026-08-21
+        channel: stable
+        title: Pagination fixes
+        summary: Cursor pagination returned duplicate rows in rare cases.
+        changes:
+          fixed:
+            - Duplicate items across page boundaries when rows shared a timestamp
+
+  - id: scout
+    prefix: SCT
+    name: Scout
+    description: 'The AI assistant: retrieval, tool use, and the model gateway behind it.'
+    current_epic: Provider failover
+    next_deliverable: Automatic failover between model providers
+    next_date: 2026-09-22
+    milestones:
+      - { name: Retrieval over workspace docs, starts_on: 2026-09-01, ends_on: 2026-09-25, status: done, progress: 100 }
+      - { name: Provider failover, starts_on: 2026-09-10, ends_on: 2026-09-28, status: risk, progress: 55 }
+      - { name: 'Tool use: calendar & email', starts_on: 2026-09-25, ends_on: 2026-11-13, status: progress, progress: 20 }
+      - { name: Evaluation harness, starts_on: 2026-10-16, ends_on: 2026-12-01, status: planned, progress: 0 }
+      - { name: Voice input, starts_on: 2026-12-13, ends_on: 2027-02-01, status: planned, progress: 0 }
+    epics:
+      - name: Provider failover
+        tasks:
+          - { title: Health scoring per provider, owner: Sam, status: done }
+          - { title: Route on latency + error rate, owner: Sam, status: progress }
+          - { title: Alert when failover triggers, owner: Dev, status: todo }
+          - { title: Cost report per provider, status: todo }
+      - name: Tool use
+        tasks:
+          - { title: Calendar read access via OAuth, owner: Jonas, status: progress }
+          - { title: Draft email tool, status: todo }
+          - { title: Confirmation step before any write, owner: Mira, status: todo }
+    releases:
+      - version: 0.9.0
+        date: 2026-09-03
+        channel: beta
+        title: Cited answers
+        summary: Every answer grounded in workspace documents now shows where it came from.
+        changes:
+          added:
+            - Inline citations linking to the source paragraph
+            - Answer confidence indicator
+          fixed:
+            - Assistant ignored documents added in the last 5 minutes
+
+# Meeting notes, newest first. `project` is a project id, or omitted for company-wide meetings.
+meetings:
+  - id: 1
+    date: 2026-09-14
+    duration: 52 min
+    attendees: Board + leads
+    title: Q3 review with the board
+    summary: Revenue landed 6% above the Q3 plan; churn steady at 1.9%. The board asked for a clearer date on the Atlas public launch and agreed to fund the SOC 2 audit now rather than in Q1. Model provider costs were flagged as the main risk to gross margin.
+    decisions:
+      - Fund SOC 2 Type I this quarter
+      - Atlas public launch date to be committed by 1 Oct
+      - Monthly cost report per model provider
+    actions:
+      - { text: Draft launch date proposal, owner: Mira }
+      - { text: Sign SOC 2 engagement, owner: Ana }
+      - { text: Provider cost dashboard in Headquarter, owner: Dev }
+    transcript:
+      - { who: Ana, at: '00:00', text: 'Welcome everyone. We will go through the numbers first, then Atlas, then risks.' }
+      - { who: Ana, at: '03:12', text: Q3 closed at 6% above plan. Most of the upside came from two enterprise expansions. }
+      - { who: Commissioner, at: '11:40', text: When can customers outside the design partner group actually get Atlas? }
+      - { who: Mira, at: '12:05', text: 'Workspaces beta goes to ten partners on 2 October. Public launch is on the roadmap for February; I would rather commit to a date once permissions are done.' }
+      - { who: Dev, at: '27:30', text: Inference costs grew faster than usage in August because of the primary provider. Failover work lets us route on cost as well as health. }
+  - id: 2
+    date: 2026-09-10
+    project: atlas
+    duration: 35 min
+    attendees: Product, design, eng
+    title: Workspaces beta scope
+    summary: Cut the activity feed from the beta scope to hold the 2 October date. Migration of single-user documents stays blocked on a data question with legal.
+    decisions:
+      - Activity feed moves to post-beta
+      - Presence indicators stay in scope
+    actions:
+      - { text: Legal answer on migration consent, owner: Ana }
+      - { text: Update roadmap bar, owner: Mira }
+    transcript:
+      - { who: Mira, at: '00:00', text: 'Goal today: agree on what ships on 2 October.' }
+      - { who: Jonas, at: '06:20', text: Activity feed is another two weeks. I would drop it. }
+      - { who: Mira, at: '06:50', text: Agreed. Presence stays because partners asked for it explicitly. }
+  - id: 3
+    date: 2026-09-08
+    project: scout
+    duration: 28 min
+    attendees: Eng
+    title: Provider failover design
+    summary: Route each request on a rolling health score per provider. Alerts fire when failover triggers more than three times an hour.
+    decisions:
+      - Health score = p95 latency + error rate over 5 minutes
+      - Manual override kept in admin
+    actions:
+      - { text: Implement scoring, owner: Sam }
+      - { text: Alert wiring, owner: Dev }
+    transcript:
+      - { who: Sam, at: '00:00', text: Proposal is a rolling five-minute window per provider. }
+      - { who: Dev, at: '09:15', text: Keep a manual override so we can pin a provider during incidents. }
+  - id: 4
+    date: 2026-09-02
+    project: relay
+    duration: 40 min
+    attendees: Eng, support
+    title: Webhook incident retrospective
+    summary: Delayed deliveries on 9 September traced to connection pool exhaustion during a migration. Migrations now run from a separate pool with a hard timeout.
+    decisions:
+      - Separate DB pool for migrations
+      - Replay endpoint prioritised
+    actions:
+      - { text: Pool separation PR, owner: Dev }
+      - { text: Customer follow-up emails, owner: Support }
+    transcript:
+      - { who: Dev, at: '00:00', text: 'Timeline first, then causes, then what we change.' }
+      - { who: Support, at: '18:00', text: 'Four customers noticed. None lost data, but two asked for a replay option.' }
+
+# Columns of the Ideas board, in order.
+idea_stages:
+  - { id: new, name: New }
+  - { id: reviewing, name: Reviewing }
+  - { id: accepted, name: Accepted }
+  - { id: progress, name: In progress }
+  - { id: shipped, name: Shipped }
+
+# Ideas board. `stage` is an idea_stages id.
+# Links point at a project page, a meeting, or a ticket id from the projects above.
+ideas:
+  - id: 1
+    stage: new
+    title: Weekly digest email for board members summarising this dashboard
+    author: Ana
+    age: 2d
+    tags: [Headquarter]
+    body: A Monday email with health, upcoming payments and the next deliverable per project. Saves the board from logging in.
+    comments:
+      - { who: Mira, when: 1d, text: Could reuse the Discussions summariser for the wording. }
+  - id: 2
+    stage: new
+    title: Let customers pin a preferred model provider
+    author: Sam
+    age: 5h
+    tags: [Scout]
+    body: Some enterprise customers have compliance reasons to stay on one provider.
+    links:
+      - { project: scout, page: roadmap }
+  - id: 3
+    stage: reviewing
+    title: Cost per customer view in billing
+    author: Dev
+    age: 6d
+    tags: [Billing, Scout]
+    body: Attribute inference spend to customers so we can see who is unprofitable.
+    links:
+      - { meeting: 1 }
+      - { ticket: SCT-104 }
+    comments:
+      - { who: Ana, when: 3d, text: Board asked for exactly this. }
+      - { who: Dev, when: 2d, text: Needs usage metering per workspace first. }
+  - id: 4
+    stage: reviewing
+    title: Public status page for customers
+    author: Support
+    age: 9d
+    tags: [Relay]
+    body: Expose the health page externally, minus incidents internal notes.
+    links:
+      - { meeting: 4 }
+  - id: 5
+    stage: accepted
+    title: Replay failed webhooks from the dashboard
+    author: Support
+    age: 2w
+    tags: [Relay]
+    body: Customers asked for a self-serve replay after the September delay.
+    links:
+      - { project: relay, page: progress }
+      - { ticket: RLY-103 }
+    comments:
+      - { who: Sam, when: 1w, text: In the reliability epic now. }
+  - id: 6
+    stage: progress
+    title: Cited answers in Scout
+    author: Mira
+    age: 6w
+    tags: [Scout]
+    body: Show the source paragraph for every grounded answer.
+    links:
+      - { project: scout, page: releases }
+  - id: 7
+    stage: shipped
+    title: Inline comments in the editor
+    author: Jonas
+    age: 3mo
+    tags: [Atlas]
+    body: Comment on any paragraph, mention a teammate.
+    links:
+      - { project: atlas, page: releases, label: Atlas 2.14.0 }
+    comments:
+      - { who: Mira, when: 1w, text: Shipped in 2.14.0. }
+
+# Everything below is admin only and never sent to non-admin sessions.
+admin:
+  integrations:
+    - { area: Health, source: Honeybadger uptime + Sidekiq API, endpoint: 'mcp://honeybadger.halden.internal/uptime', schedule: polls every 60s, connected: true }
+    - { area: Billing, source: 'Stripe, AWS Cost Explorer, manual entries', endpoint: 'https://api.halden.internal/billing/upcoming', schedule: polls daily 06:00, connected: true }
+    - { area: Roadmap & Progression, source: Linear GraphQL, endpoint: 'mcp://linear.halden.internal', schedule: polls every 15 min, connected: true }
+    - { area: Releases, source: GitHub Releases, endpoint: 'https://api.github.com/repos/halden/*/releases', schedule: on webhook, connected: true }
+    - { area: Discussions, source: Meeting recorder + summariser, endpoint: 'mcp://notes.halden.internal', schedule: not connected, connected: false }
+    - { area: Ideas, source: Headquarter native (read/write), endpoint: 'https://api.halden.internal/ideas', schedule: live, connected: true }
+
+  # Hand-maintained lists per area. Billing entries live in `bills` above (source: Manual).
+  manual_entries:
+    - { id: health, label: Health, hint: Services shown on the Health page, placeholder: 'Service name, e.g. Billing portal', items: [Web app, Public API, Model gateway, Authentication, Webhooks] }
+    - { id: billing, label: Billing, hint: Payments and invoices not captured by Stripe/AWS }
+    - { id: roadmap, label: Roadmap, hint: Milestones override Linear when set here, placeholder: 'e.g. Atlas · Public launch · Feb 2027', items: [Atlas · Public launch · Feb 2027] }
+    - { id: releases, label: Releases, hint: Release notes not on GitHub, placeholder: 'e.g. Scout 0.9.0 · Cited answers' }
+    - { id: discussions, label: Discussions, hint: Meetings added by hand, placeholder: 'e.g. 14 Sep · Q3 review with the board', items: [14 Sep · Q3 review with the board] }
+    - { id: projects, label: Projects, hint: Projects shown in the picker, placeholder: Project name, items: [Atlas, Relay, Scout] }
+
+  # Mock credentials only. Leave `password` out for SSO-only vendors and set `sso` instead.
+  vendors:
+    - { name: OpenAI, use: Model API for Scout (primary), login: billing@halden.ai, password: 'Tq7!vLm2#pRx9wZe', owner: Dev, two_factor: Authenticator · Dev, plan: Pay as you go, rotated_on: 2026-08-02 }
+    - { name: Anthropic, use: Model API for Scout (secondary), login: billing@halden.ai, password: 'h4Kd&2nWq!8sYbGf', owner: Sam, two_factor: Authenticator · Sam, plan: Pay as you go, rotated_on: 2026-08-02 }
+    - { name: AWS, use: 'Compute, RDS, S3 · account 5521', login: ops@halden.ai (root), password: '9Fz#qP2m!Vw7kLdT', owner: Dev, two_factor: Hardware key · office safe, plan: Enterprise support, rotated_on: 2026-06-14 }
+    - { name: Vercel, use: Web app hosting and previews, login: dev@halden.ai, sso: GitHub SSO, owner: Jonas, two_factor: Via GitHub, plan: Pro team }
+    - { name: GitHub, use: 'Code, CI, releases · org halden', login: ana@halden.ai (org owner), password: 'Rk3$mN8v!Xq2wPzL', owner: Ana, two_factor: Authenticator · Ana, plan: Team × 12, rotated_on: 2026-07-20 }
+    - { name: Linear, use: Roadmap and tickets, login: ana@halden.ai, sso: Google SSO, owner: Mira, two_factor: Via Google, plan: Standard × 12 }
+    - { name: Postmark, use: Transactional email, login: ops@halden.ai, password: 'bW6!nJ4c#Tz1qHsV', owner: Dev, two_factor: SMS · +47 •• 812, plan: 10k emails / mo, rotated_on: 2026-05-05 }
+    - { name: Sentry, use: Error tracking, login: ops@halden.ai, sso: Google SSO, owner: Dev, two_factor: Via Google, plan: Team · annual }
+    - { name: Apple Developer, use: App Store · Atlas mobile companion, login: apps@halden.ai, password: 'Ym2#cQ9r!Kp5xNvB', owner: Jonas, two_factor: Trusted device · Jonas iPhone, plan: Program membership, rotated_on: 2025-10-12 }
+
+  api:
+    base_url: https://hq.halden.ai/api/v1
+    mcp_url: https://hq.halden.ai/mcp
+    mcp_enabled: true
+    # Pages an API key can be granted. `vendors` exposes secrets and is off by default for new keys.
+    scopes: [health, billing, roadmap, progress, releases, discussions, ideas, vendors]
+    # Only the key prefix is stored; the full secret is shown once at creation.
+    keys:
+      - { name: Board digest bot, prefix: hq_live_4f2a, scopes: [health, billing, roadmap, progress, releases, discussions], created_on: 2026-08-12, last_used: today 06:02, created_by: Ana }
+      - { name: Claude Desktop · Dev, prefix: hq_live_9b7e, scopes: [health, billing, roadmap, progress, releases, discussions, ideas, vendors], created_on: 2026-09-03, last_used: yesterday 17:40, created_by: Dev }
+      - { name: Slack /hq command, prefix: hq_live_c31d, scopes: [health, progress, ideas], created_on: 2026-07-20, last_used: 9 Sep 2026, created_by: Mira }
+    tools:
+      - { name: list_services, description: Health status and 7-day uptime per service }
+      - { name: get_incidents, description: Open and past incidents with updates }
+      - { name: upcoming_payments, description: 'Billing due in a date range, with invoice links' }
+      - { name: roadmap, description: Milestones per project }
+      - { name: tasks, description: 'Tasks per epic, filterable by status' }
+      - { name: releases, description: Release notes per project }
+      - { name: meetings, description: 'Meeting summaries, decisions, action items' }
+      - { name: ideas, description: 'Read the Ideas board; add ideas with the ideas:write scope' }
