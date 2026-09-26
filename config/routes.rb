@@ -4,8 +4,7 @@ Rails.application.routes.draw do
     get '(*path)', to: redirect { |params, req| "#{req.protocol}localhost:#{req.port}/#{params[:path]}" }
   end
 
-  root 'inertia_example#index'
-  get 'inertia-example', to: 'inertia_example#index'
+  root 'dashboard#show'
 
   get 'login', to: 'sessions#new'
   post 'login', to: 'sessions#create'
