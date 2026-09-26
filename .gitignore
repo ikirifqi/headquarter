@@ -42,10 +42,12 @@ node_modules
 # https://vite.dev/guide/env-and-mode.html#env-files
 *.local
 
-# Ignore agent working files, but keep the shared rules, evidence, and fixtures.
+# Ignore agent working files, but keep the shared rules, plans, evidence, and fixtures.
 .omo/*
 !.omo/rules/
 !.omo/rules/**
+!.omo/plans/
+!.omo/plans/**
 !.omo/evidence/
 !.omo/evidence/**
 !.omo/fixtures/
