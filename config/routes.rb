@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   root 'dashboard#show'
 
   get 'health', to: 'health#show'
+  get 'billing', to: 'billing#show'
 
   get 'login', to: 'sessions#new'
   post 'login', to: 'sessions#create'
