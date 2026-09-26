@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   get 'releases(/:project_id)', to: 'projects#releases', as: :releases
   get 'discussions(/:id)', to: 'discussions#index', as: :discussions
   get 'ideas', to: 'ideas#index'
+  get 'admin', to: 'admin#show'
 
   get 'login', to: 'sessions#new'
   post 'login', to: 'sessions#create'
