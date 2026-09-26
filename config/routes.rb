@@ -8,6 +8,9 @@ Rails.application.routes.draw do
 
   get 'health', to: 'health#show'
   get 'billing', to: 'billing#show'
+  get 'roadmap(/:project_id)', to: 'projects#roadmap', as: :roadmap
+  get 'progress(/:project_id)', to: 'projects#progress', as: :progress
+  get 'releases(/:project_id)', to: 'projects#releases', as: :releases
 
   get 'login', to: 'sessions#new'
   post 'login', to: 'sessions#create'
