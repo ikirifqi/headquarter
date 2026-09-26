@@ -6,6 +6,9 @@ gem 'rails', '~> 8.1.3', '>= 8.1.3.1'
 gem 'propshaft'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3', '>= 2.1'
+# json 3 drops the positional options hash ActiveSupport 8.1 passes to JSON.parse, which breaks
+# reading encrypted cookies (and so sessions). Lift once Rails supports json 3.
+gem 'json', '~> 2.21'
 # Use the Puma web server [https://github.com/puma/puma]
 gem 'puma', '>= 5.0'
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
