@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   get 'roadmap(/:project_id)', to: 'projects#roadmap', as: :roadmap
   get 'progress(/:project_id)', to: 'projects#progress', as: :progress
   get 'releases(/:project_id)', to: 'projects#releases', as: :releases
+  get 'discussions(/:id)', to: 'discussions#index', as: :discussions
 
   get 'login', to: 'sessions#new'
   post 'login', to: 'sessions#create'
